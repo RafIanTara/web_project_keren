@@ -170,7 +170,7 @@ filtered.forEach(a => {
         <p class="muted" style="font-size:12px">
           <span class="author">✍️ ${a.author || "Anonim"}</span>
         </p>
-        ${isAdmin ? `<button class="btn btn-danger" onclick="deleteArticle('${a.id}')">Hapus</button>` : ""}
+        ${isAdmin ? `<div class="actions"><button class="btn btn-danger" onclick="deleteArticle('${a.id}')">Hapus</button></div>` : ""}
       </div>
     </div>
   `;

@@ -297,3 +297,20 @@ footer {
 
   .hero h1, .hero p { text-align: center; }
 }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* isi rata, tombol tetap bawah */
+}
+
+.card .p16 {
+  flex: 1; /* isi deskripsi jadi fleksibel */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card .actions {
+  margin-top: auto;
+}
