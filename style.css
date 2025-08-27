@@ -524,3 +524,79 @@ footer {
     width: 100%;
   }
 }
+
+/* ======================
+   RESPONSIVE GLOBAL
+   ====================== */
+@media (max-width: 768px) {
+  /* Biar semua container tidak mepet */
+  .container {
+    padding: 0 12px;
+    max-width: 100%;
+  }
+
+  /* NAV */
+  .nav-inner {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+  .nav-left, .nav-right {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .nav-center {
+    margin: 8px 0;
+  }
+  .nav-right .btn, 
+  .nav-right a {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* HERO (judul halaman) */
+  .hero h1 {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  .hero p {
+    text-align: center;
+  }
+
+  /* LIST ARTIKEL */
+  .grid.list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* TRENDING */
+  .grid.trending {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* TEAM */
+  .team-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* DETAIL */
+  #detail {
+    padding: 12px;
+  }
+  #d-title {
+    font-size: 1.5rem;
+  }
+  #d-meta {
+    font-size: 0.9rem;
+  }
+
+  /* FOOTER */
+  footer .container {
+    text-align: center;
+    font-size: 0.85rem;
+  }
+}
