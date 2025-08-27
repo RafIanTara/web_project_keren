@@ -9,16 +9,6 @@
   --ring: #263447;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f6f7fb;
-    --panel: #ffffff;
-    --muted: #5b6b7b;
-    --text: #0f1720;
-    --card: #ffffff;
-    --ring: #dfe7f1;
-  }
-}
 
 * { box-sizing: border-box; }
 
