@@ -112,20 +112,24 @@
       <h1>Semua Artikel</h1>
       <p class="muted">Gunakan pencarian untuk memfilter judul.</p>
     </div>
-    <div class="articles-layout">
-      <div class="searchbar">
-        <input id="q" type="search" placeholder="Cari judul artikel…" oninput="renderList()" />
-          <button class="btn" onclick="renderList()">Search</button>
-          <button class="btn" onclick="go('addArticle')" id="addArticleBtn" style="display:none">Tambah Artikel</button>
-        <div class="cluster" style="margin:12px 0 6px">
-          <span class="muted" id="count"></span>
-        </div>
-      </div>
 
-      <div id="list" class="grid list" aria-live="polite"></div>
+    <!-- 🔎 Search + tombol -->
+    <div class="searchbar">
+      <input id="q" type="search" placeholder="Cari judul artikel…" oninput="renderList()" />
+      <button class="btn" onclick="renderList()">Search</button>
+      <button class="btn" onclick="go('addArticle')">Tambah Artikel</button>
     </div>
+
+    <!-- 🔢 Info jumlah artikel -->
+    <div class="cluster" style="margin:12px 0 6px">
+      <span class="muted" id="count"></span>
+    </div>
+
+    <!-- 📚 Daftar artikel -->
+    <div id="list" class="grid list" aria-live="polite"></div>
   </div>
 </section>
+
 
 
   <!-- DETAIL -->
