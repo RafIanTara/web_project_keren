@@ -7,8 +7,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import { 
-  getFirestore, collection, addDoc, getDocs, query, orderBy, doc, getDoc, updateDoc, increment, limit 
+  getFirestore, collection, addDoc, getDocs, query, orderBy, doc, getDoc, updateDoc, increment, limit, deleteDoc 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 
 // Config Firebase
 const firebaseConfig = {
@@ -25,6 +26,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const ADMINS = ["admin@admin.com"];
+
 
 
 // Data dummy tim
@@ -89,6 +92,9 @@ async function renderTrending() {
           <span class="badge-top">Dilihat ${a.views || 0}x</span>
           <h3 class="title">${a.title}</h3>
           <p class="desc">${a.desc}</p>
+          <p class="muted" style="font-size:12px">
+              <span class="author">✍️ ${a.author || "Anonim"}</span>
+          </p>
         </div>
       </div>
     `;
@@ -104,13 +110,22 @@ async function saveArticle(event) {
   let title = document.getElementById("newTitle").value;
   let content = document.getElementById("newContent").value;
   let desc = content.length > 100 ? content.substring(0, 100) + '...' : content;
-  
+
+  // ambil user login
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Silakan login dulu sebelum menulis artikel!");
+    go("login");
+    return;
+  }
+
   await addDoc(collection(db, "articles"), {
     title: title,
     desc: desc,
     content: content,
     createdAt: Date.now(),
-    views: 0 // 🔥 Tambahan: views awal
+    views: 0,
+    author: user.email   // ⬅️ tambahkan email pembuat
   });
 
   document.getElementById("newTitle").value = "";
@@ -120,6 +135,7 @@ async function saveArticle(event) {
   loadArticles();
   go("articles");
 }
+
 
 // ========================
 //   LOAD ARTICLES
@@ -141,17 +157,25 @@ async function loadArticles() {
   let filtered = articles.filter(a => a.title.toLowerCase().includes(q));
   document.getElementById("count").innerText = `${filtered.length} artikel ditemukan`;
   
-  filtered.forEach(a => {
-    el.innerHTML += `
-      <div class="card" onclick="openDetail('${a.id}')">
-        <div class="thumb"><span>📚</span></div>
-        <div class="p16">
-          <h3 class="title">${a.title}</h3>
-          <p class="desc">${a.desc}</p>
-        </div>
+filtered.forEach(a => {
+  const user = auth.currentUser;
+  const isAdmin = user && ADMINS.includes(user.email);
+
+  el.innerHTML += `
+    <div class="card">
+      <div class="thumb" onclick="openDetail('${a.id}')"><span>📚</span></div>
+      <div class="p16">
+        <h3 class="title">${a.title}</h3>
+        <p class="desc">${a.desc}</p>
+        <p class="muted" style="font-size:12px">
+          <span class="author">✍️ ${a.author || "Anonim"}</span>
+        </p>
+        ${isAdmin ? `<button class="btn btn-danger" onclick="deleteArticle('${a.id}')">Hapus</button>` : ""}
       </div>
-    `;
-  });
+    </div>
+  `;
+});
+
 
   renderTeam();
 }
@@ -171,7 +195,8 @@ async function openDetail(id) {
     await updateDoc(docRef, { views: increment(1) });
 
     document.getElementById("d-title").innerText = a.title;
-    document.getElementById("d-meta").innerText = `Dilihat ${(a.views || 0) + 1} kali`;
+    document.getElementById("d-meta").innerHTML = 
+    `<span class="author">✍️ ${a.author || "Anonim"}</span> · Dilihat ${(a.views || 0) + 1} kali`;
     document.getElementById("d-thumb").innerHTML = "<span>📚</span>";
     document.getElementById("d-content").innerHTML = a.content;
     go("detail");
@@ -183,6 +208,25 @@ async function openDetail(id) {
   }
 }
 window.openDetail = openDetail;
+
+
+// ========================
+//   DELETE ARTICLE (khusus admin)
+// ========================
+async function deleteArticle(id) {
+  if (!confirm("Yakin mau menghapus artikel ini?")) return;
+
+  try {
+    await deleteDoc(doc(db, "articles", id));
+    alert("Artikel berhasil dihapus!");
+    loadArticles();      // refresh list
+    renderTrending();    // refresh trending
+  } catch (err) {
+    alert("Gagal menghapus artikel: " + err.message);
+  }
+}
+window.deleteArticle = deleteArticle;
+
 
 // ========================
 //   TEAM
@@ -253,34 +297,42 @@ function logout() {
   signOut(auth);
 }
 
-// Pantau status login (Auth State)
+// Pantau status login & update UI
 onAuthStateChanged(auth, (user) => {
   const loginBtn = document.getElementById("loginBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
+  const userBlock = document.getElementById("userBlock");
+  const userInfo = document.getElementById("userInfo");
   const addArticleBtn = document.querySelector("button[onclick*='addArticle']");
 
   if (user) {
     console.log("✅ Sudah login:", user.email);
 
-    // Update UI
     if (loginBtn) loginBtn.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "inline-flex";
+    if (userBlock) userBlock.style.display = "flex";
     if (addArticleBtn) addArticleBtn.style.display = "inline-flex";
+    if (userInfo) userInfo.textContent = `👤 ${user.email}`;
 
-    // Masuk ke dashboard/home
     go("home");
+
+    // 🔥 PENTING: refresh list artikel agar tombol hapus muncul
+    loadArticles();
+
   } else {
     console.log("❌ Belum login");
 
-    // Update UI
     if (loginBtn) loginBtn.style.display = "inline-flex";
-    if (logoutBtn) logoutBtn.style.display = "none";
+    if (userBlock) userBlock.style.display = "none";
     if (addArticleBtn) addArticleBtn.style.display = "none";
+    if (userInfo) userInfo.textContent = "";
 
-    // Paksa ke login page
     go("login");
+
+    // 🔥 Kalau logout, refresh list biar tombol hapus hilang
+    loadArticles();
   }
 });
+
+
 
 
 window.register = register;

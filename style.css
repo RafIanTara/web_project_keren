@@ -36,9 +36,12 @@ body {
 }
 
 .container {
-  width: min(1100px, 92vw);
-  margin-inline: auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding-inline: 20px; /* biar gak nempel ke pinggir */
 }
+
 
 /* NAVBAR */
 .nav {
@@ -150,12 +153,14 @@ h1 {
   flex: 0 0 240px;
   scroll-snap-align: start;
 }
+
 .grid.list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
-  justify-content: center; /* center tapi tetap responsif */
+  justify-content: stretch; /* isi full */
 }
+
 
 
 .card {
@@ -352,4 +357,170 @@ footer {
   padding: 2px 8px;
   border-radius: 12px;
   margin-bottom: 6px;
+}
+
+.author {
+  font-weight: 700;
+  color: var(--brand-2); /* hijau kebiruan biar kontras */
+  background: color-mix(in oklab, var(--brand) 25%, transparent);
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.user-info {
+  font-weight: 600;
+  color: var(--brand-2);
+  margin-left: 12px;
+}
+
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav-right {
+  gap: 10px;
+}
+
+.user-info {
+  font-weight: 600;
+  color: var(--brand-2);
+  margin-left: 8px;
+}
+.user-block {
+  display: flex;
+  flex-direction: column;  /* biar email di atas logout */
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.user-info {
+  font-size: 12px;       /* lebih kecil dari nav link */
+  color: var(--muted);   /* abu-abu biar soft */
+  font-weight: 500;
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-left {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.nav-center .logo {
+  display: flex;
+  flex-direction: column;  /* logo di atas nama */
+  align-items: center;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.user-block {
+  display: flex;
+  flex-direction: column;  /* email di atas logout */
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.user-info {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.articles-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr; /* kiri search, kanan list */
+  gap: 20px;
+  align-items: start;
+}
+
+.articles-layout .searchbar {
+  flex-direction: column; /* biar input & tombol search tetap vertikal */
+  gap: 10px;
+}
+
+.articles-layout #list {
+  width: 100%;
+}
+
+.admin-profile {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.admin-photo {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 12px;
+  border: 3px solid var(--primary);
+}
+
+.admin-name {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.btn-danger {
+  background: #e63946;
+  color: #fff;
+  margin-top: 8px;
+}
+
+.btn-danger:hover {
+  background: #d62828;
+}
+
+/* Responsif untuk layar kecil (HP) */
+@media (max-width: 768px) {
+  /* Navbar jadi kolom */
+  .nav-inner {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-left, .nav-right {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .nav-center {
+    margin: 8px 0;
+  }
+
+  /* Grid artikel jadi 1 kolom */
+  .grid.trending, .grid.list {
+    grid-template-columns: 1fr;
+  }
+
+  /* Search bar + tombol jadi stack */
+  .searchbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .searchbar input {
+    width: 100%;
+  }
 }
