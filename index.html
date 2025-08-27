@@ -22,8 +22,45 @@
       <a href="#team" onclick="go('team')">Profil Tim</a>
       <button class="btn" onclick="go('articles'); document.getElementById('q').focus()">Cari Artikel</button>
       <button class="btn" onclick="go('addArticle')">Tambah Artikel</button>
+<a href="#login" onclick="go('login')" id="loginBtn">Login</a>
+<button class="btn" onclick="go('addArticle')" style="display:none">Tambah Artikel</button>
+<button class="btn" onclick="logout()" id="logoutBtn" style="display:none">Logout</button>
+
     </div>
   </nav>
+
+  <!-- LOGIN -->
+<section id="login">
+  <div class="container">
+    <div class="hero">
+      <h1>Login</h1>
+      <p class="muted">Silakan masuk dengan email dan password</p>
+    </div>
+    <form onsubmit="login(event)">
+      <input type="email" id="loginEmail" placeholder="Email" required style="width:100%;padding:12px;margin:8px 0">
+      <input type="password" id="loginPassword" placeholder="Password" required style="width:100%;padding:12px;margin:8px 0">
+      <button type="submit" class="btn">Login</button>
+    </form>
+    <p class="muted" style="margin-top:10px">
+      Belum punya akun? <a href="#" onclick="go('register')">Daftar</a>
+    </p>
+  </div>
+</section>
+
+<!-- REGISTER -->
+<section id="register">
+  <div class="container">
+    <div class="hero">
+      <h1>Register</h1>
+      <p class="muted">Buat akun baru dengan email dan password</p>
+    </div>
+    <form onsubmit="register(event)">
+      <input type="email" id="regEmail" placeholder="Email" required style="width:100%;padding:12px;margin:8px 0">
+      <input type="password" id="regPassword" placeholder="Password" required style="width:100%;padding:12px;margin:8px 0">
+      <button type="submit" class="btn">Daftar</button>
+    </form>
+  </div>
+</section>
 
   <!-- HOME -->
   <section id="home" class="active">

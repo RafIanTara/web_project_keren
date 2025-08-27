@@ -1,4 +1,7 @@
-// Import dari CDN
+import { 
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
 import { 
   initializeApp 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -21,6 +24,8 @@ const firebaseConfig = {
 // Init Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+
 
 // Data dummy tim
 const team = [
@@ -30,11 +35,21 @@ const team = [
 ];
 
 // Fungsi untuk pindah halaman
+// Fungsi untuk pindah halaman dengan proteksi login
 function go(page) {
+  const user = auth.currentUser;
+  
+  // Kalau belum login, paksa ke halaman login
+  if (!user && page !== "login" && page !== "register") {
+    alert("Silakan login terlebih dahulu.");
+    page = "login";
+  }
+
   document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
   document.getElementById(page).classList.add("active");
   window.location.hash = page;
 }
+
 
 window.addEventListener("load", () => {
   let page = window.location.hash.replace("#", "") || "home";
@@ -196,3 +211,79 @@ function renderTeam() {
 // ========================
 window.go = go;
 window.saveArticle = saveArticle;
+
+// ========================
+//   AUTH
+// ========================
+async function register(event) {
+  event.preventDefault();
+  let email = document.getElementById("regEmail").value;
+  let password = document.getElementById("regPassword").value;
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // Simpan ke Firestore juga
+    await addDoc(collection(db, "users"), {
+      uid: userCredential.user.uid,
+      email: email,
+      createdAt: Date.now()
+    });
+    alert("Registrasi berhasil, silakan login!");
+    go("login");
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
+}
+
+async function login(event) {
+  event.preventDefault();
+  let email = document.getElementById("loginEmail").value;
+  let password = document.getElementById("loginPassword").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("Login berhasil!");
+    go("home");
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
+}
+
+function logout() {
+  signOut(auth);
+}
+
+// Pantau status login (Auth State)
+onAuthStateChanged(auth, (user) => {
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const addArticleBtn = document.querySelector("button[onclick*='addArticle']");
+
+  if (user) {
+    console.log("✅ Sudah login:", user.email);
+
+    // Update UI
+    if (loginBtn) loginBtn.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "inline-flex";
+    if (addArticleBtn) addArticleBtn.style.display = "inline-flex";
+
+    // Masuk ke dashboard/home
+    go("home");
+  } else {
+    console.log("❌ Belum login");
+
+    // Update UI
+    if (loginBtn) loginBtn.style.display = "inline-flex";
+    if (logoutBtn) logoutBtn.style.display = "none";
+    if (addArticleBtn) addArticleBtn.style.display = "none";
+
+    // Paksa ke login page
+    go("login");
+  }
+});
+
+
+window.register = register;
+window.login = login;
+window.logout = logout;
+
